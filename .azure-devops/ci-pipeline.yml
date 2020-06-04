@@ -7,6 +7,9 @@ stages:
         vmImage: 'ubuntu-latest'
 
       steps:
+      - script: az login --service-principal -u $(ARM_CLIENT_ID) -p $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)
+        displayName: 'Azure Login'
+
       - script: cd modules/terraform-azurerm-vnet-peering && terraform init
         displayName: 'Terraform Init'
 
