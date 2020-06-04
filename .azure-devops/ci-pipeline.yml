@@ -6,6 +6,12 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
 
+      variables:
+        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+        ARM_TENANT_ID: $(ARM_TENANT_ID)
+
       steps:
       - script: cd modules/terraform-azurerm-vnet-peering && terraform init
         displayName: 'Terraform Init'
