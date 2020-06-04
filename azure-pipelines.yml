@@ -1,0 +1,20 @@
+stages:
+  - stage: CI
+    jobs:
+
+    - job: TerraformCI
+      pool:
+        vmImage: 'ubuntu-latest'
+
+      steps:
+      - script: cd modules/terraform-azurerm-vnet-peering && terraform init
+        displayName: 'Terraform Init'
+
+      - script: cd modules/terraform-azurerm-vnet-peering && terraform fmt
+        displayName: 'Terraform Format'
+
+      - script: cd modules/terraform-azurerm-vnet-peering && terraform validate
+        displayName: 'Terraform Validate'
+      
+      - script: cd modules/terraform-azurerm-vnet-peering && terraform plan
+        displayName: 'Terraform Plan'
