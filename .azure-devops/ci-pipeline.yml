@@ -13,14 +13,24 @@ stages:
         ARM_TENANT_ID: $(ARM_TENANT_ID)
 
       steps:
-      - script: cd modules/terraform-azurerm-vnet-peering && terraform init
+      - bash: terraform init
+        workingDirectory: modules/terraform-azurerm-vnet-peering
         displayName: 'Terraform Init'
 
-      - script: cd modules/terraform-azurerm-vnet-peering && terraform fmt
+      - bash: terraform fmt
+        workingDirectory: modules/terraform-azurerm-vnet-peering
         displayName: 'Terraform Format'
 
-      - script: cd modules/terraform-azurerm-vnet-peering && terraform validate
+      - bash: terraform validate
+        workingDirectory: modules/terraform-azurerm-vnet-peering
         displayName: 'Terraform Validate'
       
-      - script: env && cd modules/terraform-azurerm-vnet-peering && terraform plan
+      - bash: env && terraform plan
+        workingDirectory: modules/terraform-azurerm-vnet-peering
         displayName: 'Terraform Plan'
+        env: {
+          ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+          ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+          ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+          ARM_TENANT_ID: $(ARM_TENANT_ID)
+        }
