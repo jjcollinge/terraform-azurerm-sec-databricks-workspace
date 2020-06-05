@@ -19,7 +19,7 @@ stages:
         workingDirectory: modules/terraform-azurerm-vnet-peering
         displayName: 'Terraform Validate'
       
-      - script: env && terraform plan
+      - bash: env && terraform plan
         workingDirectory: modules/terraform-azurerm-vnet-peering
         displayName: 'Terraform Plan'
         env: 
