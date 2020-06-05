@@ -8,7 +8,7 @@ locals {
 }
 
 module "naming" {
-  source = "https://github.com/Azure/terraform-azurerm-naming.git"
+  source = "git::https://github.com/Azure/terraform-azurerm-naming"
 }
 
 resource "azurerm_resource_group" "analytics_platform" {
