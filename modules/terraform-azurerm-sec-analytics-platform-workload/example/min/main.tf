@@ -8,7 +8,7 @@ locals {
 }
 
 module "naming" {
-  source = "git@ssh.dev.azure.com:v3/IDC-Govt/BOUNDARY/terraform-azurerm-naming"
+  source = "https://github.com/Azure/terraform-azurerm-naming.git"
 }
 
 resource "azurerm_resource_group" "analytics_platform" {

@@ -4,7 +4,7 @@ provider "azurerm" {
 }
 
 module "naming" {
-  source = "git@ssh.dev.azure.com:v3/IDC-Govt/BOUNDARY/terraform-azurerm-naming"
+  source = "https://github.com/Azure/terraform-azurerm-naming.git"
   prefix = var.prefix
   suffix = var.suffix
 }

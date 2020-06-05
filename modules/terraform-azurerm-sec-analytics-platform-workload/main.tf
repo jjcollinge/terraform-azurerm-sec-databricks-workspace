@@ -9,7 +9,7 @@ locals {
 }
 
 module "naming" {
-  source = "git@github.com:Azure/terraform-azurerm-naming.git"
+  source = "https://github.com/Azure/terraform-azurerm-naming.git"
   prefix = local.prefix
   suffix = local.suffix
 }
