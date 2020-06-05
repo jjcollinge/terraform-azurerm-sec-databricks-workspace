@@ -28,9 +28,8 @@ stages:
       - bash: env && terraform plan
         workingDirectory: modules/terraform-azurerm-vnet-peering
         displayName: 'Terraform Plan'
-        env: {
-          ARM_CLIENT_ID: $(ARM_CLIENT_ID),
-          ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET),
-          ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID),
+        env: 
+          ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+          ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+          ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
           ARM_TENANT_ID: $(ARM_TENANT_ID)
-        }
