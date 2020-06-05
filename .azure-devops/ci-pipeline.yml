@@ -1,0 +1,32 @@
+stages:
+  - stage: CI
+    jobs:
+
+    - job: TerraformCI
+      pool:
+        vmImage: 'ubuntu-latest'
+
+      steps:
+      - bash: terraform init
+        workingDirectory: modules/terraform-azurerm-sec-analytics-platform-workload
+        displayName: 'Terraform Init'
+
+      - bash: terraform fmt
+        workingDirectory: modules/terraform-azurerm-sec-analytics-platform-workload
+        displayName: 'Terraform Format'
+
+      - bash: terraform validate
+        workingDirectory: modules/terraform-azurerm-sec-analytics-platform-workload
+        displayName: 'Terraform Validate'
+      
+      - bash: env && terraform plan
+        workingDirectory: modules/terraform-azurerm-sec-analytics-platform-workload
+        displayName: 'Terraform Plan'
+        env: 
+          ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+          ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+          ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+          ARM_TENANT_ID: $(ARM_TENANT_ID)
+          TF_VAR_shared_services_virtual_network_resource_group_name: $(SHARED_RESOURCE_GROUP_NAME)
+          TF_VAR_shared_services_virtual_network_name: $(SHARED_VNET_NAME)
+          TF_VAR_virtual_network_cidr: $(SHARED_VNET_CIDR)
