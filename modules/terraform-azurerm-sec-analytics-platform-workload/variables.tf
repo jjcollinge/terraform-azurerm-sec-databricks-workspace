@@ -32,3 +32,20 @@ variable "analytics_platform_resource_group_location" {
   description = "The Azure region location of where to deploy the Analytics Platfrom."
   default     = "uksouth"
 }
+
+variable "analytics_platform_log_retention_duration" {
+  type        = number
+  description = "The duration in days to retain any logs created by the Analytics Platform. Note: Deleting the Analytics Platform in its entirety will delete any captured logs. This parameter allows you to control log retention within the lifecycle of the Analytics Platform."
+  default     = "30"
+}
+
+variable "authorised_audit_client_ips" {
+  type        = list(string)
+  description = "A list of IP addresses of the clients or endpoints athorised to directly access the Analytics Platforms audit logs."
+  default     = []
+}
+
+variable "authorised_subnet_ids" {
+  type        = list(string)
+  description = "A list of Azure Subnet ids of the subnets that are allowed to directly access the Analytics Platforms audit subnet."
+}
