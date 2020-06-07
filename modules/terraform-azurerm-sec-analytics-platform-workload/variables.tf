@@ -48,4 +48,5 @@ variable "authorised_audit_client_ips" {
 variable "authorised_subnet_ids" {
   type        = list(string)
   description = "A list of Azure Subnet ids of the subnets that are allowed to directly access the Analytics Platforms audit subnet."
+  default     = []
 }

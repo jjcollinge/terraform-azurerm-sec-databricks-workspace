@@ -113,4 +113,62 @@ module "audit_diagnostics_package" {
   bypass_internal_network_rules        = true
 }
 
+#TODO: Refactor module to remove diagnostics script path from module variables. Change variable names
 
+#module "terraform-azurerm-databricks-workspace" {
+#  source                   = "git::https://github.com/Azure/terraform-azurerm-sec-databricks-workspace"
+#  resource_group_name      = azurerm_resource_group.analytics_platform.name
+#  prefix                   = local.prefix
+#  suffix                   = local.suffix
+#  databricks_workspace_sku = "premium"
+#  log_analytics_rg_name    = azurerm_resource_group.analytics_platform.name
+#  log_analytics_name       = module.audit_diagnostics_package.log_analytics_workspace.name
+#  storage_account_rg_name  = azurerm_resource_group.analytics_platform.name
+#  storage_account_name     = module.datalake.storage_account.name
+#  diagnostics_script_path  = "../scripts/diagnostics.sh"
+#}
+
+module "apim" {
+  source              = "git::https://github.com/Azure/terraform-azurerm-sec-api-management"
+  resource_group_name = azurerm_resource_group.analytics_platform.name
+  prefix              = local.prefix
+  suffix              = local.suffix
+
+  #APIM CoreProperties
+
+  #TODO: Add appropriate publisher details
+
+  apim_publisher_name  = "Analytics Platform"
+  apim_publisher_email = "Analytics@Platform.com"
+  apim_sku             = "Developer_1"
+
+  #APIM Networking Properties
+  apim_virtual_network_type                = "Internal"
+  apim_virtual_network_subnet_name         = module.virutal_network.apim_subnet.name
+  apim_virtual_network_name                = module.virutal_network.analytics_platform_vnet.name
+  apim_virtual_network_resource_group_name = azurerm_resource_group.analytics_platform.name
+
+  #API Properties
+
+  #TODO: This property set is failing with Call to function "file" failed: no file exists at policies.xml error.
+  #apim_policies_path = "./apim_policies/policies.xml"
+
+  #TODO: Establish and configure to use certificates stored in Key Vault
+
+  certificates = []
+
+  #APIM Authorisation
+
+  #TODO: Establish and configure an authorisation server
+
+  enable_authorization_server                     = false
+  apim_authorization_server_name                  = ""
+  apim_authorization_server_display_name          = ""
+  apim_authorization_server_auth_endpoint         = ""
+  apim_authorization_server_token_endpoint        = ""
+  apim_authorization_server_client_id             = ""
+  apim_authorization_server_registration_endpoint = ""
+  apim_authorization_server_grant_types           = []
+  apim_bearer_token_sending_methods               = []
+  apim_authorization_server_methods               = []
+}
