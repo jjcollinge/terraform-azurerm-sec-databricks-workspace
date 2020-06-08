@@ -31,24 +31,27 @@ resource "azurerm_subnet" "databricks_private_subnet" {
 }
 
 resource "azurerm_subnet" "data_lake_subnet" {
-  name                 = join(module.naming.subnet.dashes ? "-" : "", [module.naming.subnet.name, "datalake"])
-  resource_group_name  = var.analytics_platform_resource_group.name
-  virtual_network_name = azurerm_virtual_network.local.name
-  address_prefixes     = [cidrsubnet(var.virtual_network_cidr, 5, 2)]
+  name                                           = join(module.naming.subnet.dashes ? "-" : "", [module.naming.subnet.name, "datalake"])
+  resource_group_name                            = var.analytics_platform_resource_group.name
+  virtual_network_name                           = azurerm_virtual_network.local.name
+  address_prefixes                               = [cidrsubnet(var.virtual_network_cidr, 5, 2)]
+  enforce_private_link_endpoint_network_policies = true
 }
 
 resource "azurerm_subnet" "audit_subnet" {
-  name                 = join(module.naming.subnet.dashes ? "-" : "", [module.naming.subnet.name, "audit"])
-  resource_group_name  = var.analytics_platform_resource_group.name
-  virtual_network_name = azurerm_virtual_network.local.name
-  address_prefixes     = [cidrsubnet(var.virtual_network_cidr, 5, 3)]
+  name                                           = join(module.naming.subnet.dashes ? "-" : "", [module.naming.subnet.name, "audit"])
+  resource_group_name                            = var.analytics_platform_resource_group.name
+  virtual_network_name                           = azurerm_virtual_network.local.name
+  address_prefixes                               = [cidrsubnet(var.virtual_network_cidr, 5, 3)]
+  enforce_private_link_endpoint_network_policies = true
 }
 
 resource "azurerm_subnet" "secrets_subnet" {
-  name                 = join(module.naming.subnet.dashes ? "-" : "", [module.naming.subnet.name, "secrets"])
-  resource_group_name  = var.analytics_platform_resource_group.name
-  virtual_network_name = azurerm_virtual_network.local.name
-  address_prefixes     = [cidrsubnet(var.virtual_network_cidr, 5, 4)]
+  name                                           = join(module.naming.subnet.dashes ? "-" : "", [module.naming.subnet.name, "secrets"])
+  resource_group_name                            = var.analytics_platform_resource_group.name
+  virtual_network_name                           = azurerm_virtual_network.local.name
+  address_prefixes                               = [cidrsubnet(var.virtual_network_cidr, 5, 4)]
+  enforce_private_link_endpoint_network_policies = true
 }
 
 resource "azurerm_subnet" "apim_subnet" {
