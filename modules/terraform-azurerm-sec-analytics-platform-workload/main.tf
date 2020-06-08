@@ -115,18 +115,17 @@ module "audit_diagnostics_package" {
 
 #TODO: Refactor module to remove diagnostics script path from module variables. Change variable names
 
-#module "terraform-azurerm-databricks-workspace" {
-#  source                   = "git::https://github.com/Azure/terraform-azurerm-sec-databricks-workspace"
-#  resource_group_name      = azurerm_resource_group.analytics_platform.name
-#  prefix                   = local.prefix
-#  suffix                   = local.suffix
-#  databricks_workspace_sku = "premium"
-#  log_analytics_rg_name    = azurerm_resource_group.analytics_platform.name
-#  log_analytics_name       = module.audit_diagnostics_package.log_analytics_workspace.name
-#  storage_account_rg_name  = azurerm_resource_group.analytics_platform.name
-#  storage_account_name     = module.datalake.storage_account.name
-#  diagnostics_script_path  = "../scripts/diagnostics.sh"
-#}
+module "terraform-azurerm-databricks-workspace" {
+  source                   = "git::https://github.com/Azure/terraform-azurerm-sec-databricks-workspace"
+  resource_group_name      = azurerm_resource_group.analytics_platform.name
+  prefix                   = local.prefix
+  suffix                   = local.suffix
+  databricks_workspace_sku = "premium"
+  log_analytics_rg_name    = azurerm_resource_group.analytics_platform.name
+  log_analytics_name       = module.audit_diagnostics_package.log_analytics_workspace.name
+  storage_account_rg_name  = azurerm_resource_group.analytics_platform.name
+  storage_account_name     = module.datalake.storage_account.name
+}
 
 module "apim" {
   source              = "git::https://github.com/Azure/terraform-azurerm-sec-api-management"
@@ -151,7 +150,7 @@ module "apim" {
   #API Properties
 
   #TODO: This property set is failing with Call to function "file" failed: no file exists at policies.xml error.
-  #apim_policies_path = "./apim_policies/policies.xml"
+  apim_policies_path = "./apim_policies/policies.xml"
 
   #TODO: Establish and configure to use certificates stored in Key Vault
 
