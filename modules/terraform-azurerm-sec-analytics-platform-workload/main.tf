@@ -62,7 +62,7 @@ module "security_package" {
 #TODO: Check for key standard i.e key bit length and preferred crypto algorithm
 module "datalake_managed_encryption_key" {
   source              = "git::https://github.com/Azure/terraform-azurerm-sec-storage-managed-encryption-key"
-  resource_group_name = azurerm_resource_group.analytics_platform.name
+  resource_group_name = module.security_package.resource_group
   storage_account     = module.datalake.storage_account
   key_vault_name      = module.security_package.key_vault.name
   suffix              = local.suffix
@@ -111,7 +111,7 @@ module "databricks-workspace" {
   resource_group_name                 = azurerm_resource_group.analytics_platform.name
   suffix                              = local.suffix
   databricks_workspace_sku            = "premium"
-  log_analytics_resource_group_name   = azurerm_resource_group.analytics_platform.name
+  log_analytics_resource_group_name   = module.audit_diagnostics_package.resource_group
   log_analytics_name                  = module.audit_diagnostics_package.log_analytics_workspace.name
   storage_account_resource_group_name = azurerm_resource_group.analytics_platform.name
   storage_account_name                = module.datalake.storage_account.name
