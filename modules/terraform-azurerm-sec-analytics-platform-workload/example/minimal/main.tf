@@ -4,7 +4,7 @@ provider "azurerm" {
 }
 
 locals {
-  unique_name_stub = substr(module.naming.unique-seed, 0, 5)
+  unique_name_stub = substr(module.naming.unique-seed, 0, 3)
 }
 
 module "naming" {
@@ -17,7 +17,7 @@ resource "azurerm_resource_group" "analytics_platform" {
 }
 
 resource "azurerm_virtual_network" "example_shared_services" {
-  name                = "${module.naming.virtual_network.name_unique}-shared-services-${local.unique_name_stub}"
+  name                = "${module.naming.virtual_network.slug}-shared-services-${local.unique_name_stub}"
   resource_group_name = azurerm_resource_group.analytics_platform.name
   location            = azurerm_resource_group.analytics_platform.location
   address_space       = ["10.0.0.0/24"]

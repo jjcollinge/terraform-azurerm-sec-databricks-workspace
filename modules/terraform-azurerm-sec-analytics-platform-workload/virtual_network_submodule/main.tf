@@ -28,6 +28,7 @@ resource "azurerm_subnet" "databricks_private_subnet" {
   resource_group_name  = var.analytics_platform_resource_group.name
   virtual_network_name = azurerm_virtual_network.local.name
   address_prefixes     = [cidrsubnet(var.virtual_network_cidr, 5, 1)]
+  service_endpoints    = ["Microsoft.Storage", "Microsoft.KeyVault"]
 }
 
 resource "azurerm_subnet" "data_lake_subnet" {
@@ -36,6 +37,7 @@ resource "azurerm_subnet" "data_lake_subnet" {
   virtual_network_name                           = azurerm_virtual_network.local.name
   address_prefixes                               = [cidrsubnet(var.virtual_network_cidr, 5, 2)]
   enforce_private_link_endpoint_network_policies = true
+  service_endpoints                              = ["Microsoft.Storage", "Microsoft.KeyVault"]
 }
 
 resource "azurerm_subnet" "audit_subnet" {
@@ -44,6 +46,7 @@ resource "azurerm_subnet" "audit_subnet" {
   virtual_network_name                           = azurerm_virtual_network.local.name
   address_prefixes                               = [cidrsubnet(var.virtual_network_cidr, 5, 3)]
   enforce_private_link_endpoint_network_policies = true
+  service_endpoints                              = ["Microsoft.Storage"]
 }
 
 resource "azurerm_subnet" "secrets_subnet" {
@@ -52,6 +55,7 @@ resource "azurerm_subnet" "secrets_subnet" {
   virtual_network_name                           = azurerm_virtual_network.local.name
   address_prefixes                               = [cidrsubnet(var.virtual_network_cidr, 5, 4)]
   enforce_private_link_endpoint_network_policies = true
+  service_endpoints                              = ["Microsoft.KeyVault"]
 }
 
 resource "azurerm_subnet" "apim_subnet" {
@@ -59,6 +63,7 @@ resource "azurerm_subnet" "apim_subnet" {
   resource_group_name  = var.analytics_platform_resource_group.name
   virtual_network_name = azurerm_virtual_network.local.name
   address_prefixes     = [cidrsubnet(var.virtual_network_cidr, 5, 5)]
+  service_endpoints    = ["Microsoft.Storage", "Microsoft.KeyVault"]
 }
 
 resource "azurerm_virtual_network_peering" "ap_to_ss_peering" {

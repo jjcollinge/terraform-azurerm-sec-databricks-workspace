@@ -15,12 +15,6 @@ variable "shared_services_virtual_network_name" {
 }
 
 #Optional Variables
-variable "prefix" {
-  type        = list(string)
-  description = "A naming prefix to be used in the creation of unique names for Azure resources."
-  default     = []
-}
-
 variable "suffix" {
   type        = list(string)
   description = "A naming suffix to be used in the creation of unique names for Azure resources."

@@ -4,13 +4,11 @@ provider "azurerm" {
 }
 
 locals {
-  prefix = var.prefix
   suffix = concat(["ap"], var.suffix)
 }
 
 module "naming" {
   source = "git::https://github.com/Azure/terraform-azurerm-naming"
-  prefix = local.prefix
   suffix = local.suffix
 }
 
@@ -21,7 +19,6 @@ resource "azurerm_resource_group" "analytics_platform" {
 
 module "virutal_network" {
   source                                              = "./virtual_network_submodule"
-  prefix                                              = local.prefix
   suffix                                              = local.suffix
   analytics_platform_resource_group                   = azurerm_resource_group.analytics_platform
   virtual_network_cidr                                = var.virtual_network_cidr
@@ -37,7 +34,6 @@ module "datalake" {
   storage_account_replication_type = "LRS"
 
   #TODO: Work out what additional if any allowed ip ranges and permitted virtual network subnets there needs to be.
-
   allowed_ip_ranges                    = []
   permitted_virtual_network_subnet_ids = [module.virutal_network.data_lake_subnet.id, module.virutal_network.apim_subnet.id, module.virutal_network.databricks_private_subnet.id]
   enable_data_lake_filesystem          = true
@@ -50,11 +46,11 @@ module "security_package" {
   use_existing_resource_group          = false
   resource_group_location              = azurerm_resource_group.analytics_platform.location
   key_vault_private_endpoint_subnet_id = module.virutal_network.secrets_subnet.id
-  prefix                               = local.prefix
-  suffix                               = local.suffix
+
+  #Temporarily commenting out to avoid name length issue.
+  #suffix                               = local.suffix
 
   #TODO: Work out what additional if any allowed ip ranges and permitted virtual network subnets there needs to be.
-
   allowed_ip_ranges                    = []
   permitted_virtual_network_subnet_ids = [module.virutal_network.data_lake_subnet.id, module.virutal_network.apim_subnet.id, module.virutal_network.databricks_private_subnet.id]
   sku_name                             = "standard"
@@ -64,13 +60,11 @@ module "security_package" {
 }
 
 #TODO: Check for key standard i.e key bit length and preferred crypto algorithm
-
 module "datalake_managed_encryption_key" {
   source              = "git::https://github.com/Azure/terraform-azurerm-sec-storage-managed-encryption-key"
   resource_group_name = azurerm_resource_group.analytics_platform.name
   storage_account     = module.datalake.storage_account
   key_vault_name      = module.security_package.key_vault.name
-  prefix              = local.prefix
   suffix              = local.suffix
 }
 
@@ -79,7 +73,6 @@ module "audit_diagnostics_package" {
   storage_account_private_endpoint_subnet_id = module.virutal_network.audit_subnet.id
   use_existing_resource_group                = false
   resource_group_location                    = azurerm_resource_group.analytics_platform.location
-  prefix                                     = local.prefix
   suffix                                     = local.suffix
   event_hub_namespace_sku                    = "Standard"
   event_hub_namespace_capacity               = "1"
@@ -113,30 +106,26 @@ module "audit_diagnostics_package" {
   bypass_internal_network_rules        = true
 }
 
-#TODO: Refactor module to remove diagnostics script path from module variables. Change variable names
-
-module "terraform-azurerm-databricks-workspace" {
+module "databricks-workspace" {
   source                              = "git::https://github.com/Azure/terraform-azurerm-sec-databricks-workspace"
   resource_group_name                 = azurerm_resource_group.analytics_platform.name
-  prefix                              = local.prefix
   suffix                              = local.suffix
   databricks_workspace_sku            = "premium"
   log_analytics_resource_group_name   = azurerm_resource_group.analytics_platform.name
   log_analytics_name                  = module.audit_diagnostics_package.log_analytics_workspace.name
   storage_account_resource_group_name = azurerm_resource_group.analytics_platform.name
   storage_account_name                = module.datalake.storage_account.name
+  module_depends_on                   = ["module.audit_diagnostics_package"]
 }
 
 module "apim" {
   source              = "git::https://github.com/Azure/terraform-azurerm-sec-api-management"
   resource_group_name = azurerm_resource_group.analytics_platform.name
-  prefix              = local.prefix
   suffix              = local.suffix
 
   #APIM CoreProperties
 
   #TODO: Add appropriate publisher details
-
   apim_publisher_name  = "Analytics Platform"
   apim_publisher_email = "Analytics@Platform.com"
   apim_sku             = "Developer_1"
@@ -148,18 +137,14 @@ module "apim" {
   apim_virtual_network_resource_group_name = azurerm_resource_group.analytics_platform.name
 
   #API Properties
-
-  #TODO: This property set is failing with Call to function "file" failed: no file exists at policies.xml error.
   apim_policies_path = "./apim_policies/policies.xml"
 
   #TODO: Establish and configure to use certificates stored in Key Vault
-
   certificates = []
 
   #APIM Authorisation
 
   #TODO: Establish and configure an authorisation server
-
   enable_authorization_server                     = false
   apim_authorization_server_name                  = ""
   apim_authorization_server_display_name          = ""
