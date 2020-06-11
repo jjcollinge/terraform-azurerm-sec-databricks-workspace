@@ -30,3 +30,6 @@ output "apim_subnet" {
   value = azurerm_subnet.apim_subnet
 }
 
+output "network_ready" {
+  value = null_resource.network_ready.id
+}

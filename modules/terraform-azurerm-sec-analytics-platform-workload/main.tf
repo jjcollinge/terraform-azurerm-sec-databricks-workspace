@@ -1,5 +1,5 @@
 provider "azurerm" {
-  version = "~>2.0"
+  version = "~>2.13"
   features {}
 }
 
@@ -38,7 +38,7 @@ module "datalake" {
   storage_account_replication_type = "LRS"
 
   #TODO: Work out what additional if any allowed ip ranges and permitted virtual network subnets there needs to be.
-  allowed_ip_ranges                    = []
+  allowed_ip_ranges                    = var.authorised_audit_client_ips
   permitted_virtual_network_subnet_ids = [module.virutal_network.data_lake_subnet.id, module.virutal_network.apim_subnet.id, module.virutal_network.databricks_private_subnet.id]
   enable_data_lake_filesystem          = true
   data_lake_filesystem_name            = module.naming.data_lake_file_system.name_unique
@@ -55,9 +55,9 @@ module "security_package" {
   #suffix                               = local.suffix
 
   #TODO: Work out what additional if any allowed ip ranges and permitted virtual network subnets there needs to be.
-  allowed_ip_ranges                    = []
+  allowed_ip_ranges                    = var.authorised_audit_client_ips
   permitted_virtual_network_subnet_ids = [module.virutal_network.data_lake_subnet.id, module.virutal_network.apim_subnet.id, module.virutal_network.databricks_private_subnet.id]
-  sku_name                             = "standard"
+  sku_name                             = module.virutal_network.network_ready != null ? "standard" : "standard" # TODO: Remove dependency hack
   enabled_for_deployment               = false
   enabled_for_disk_encryption          = true
   enabled_for_template_deployment      = false
