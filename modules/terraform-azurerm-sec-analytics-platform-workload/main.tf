@@ -47,8 +47,8 @@ module "datalake" {
 
 module "security_package" {
   source                               = "git::https://github.com/Azure/terraform-azurerm-sec-security-package"
-  use_existing_resource_group          = false
-  resource_group_location              = azurerm_resource_group.analytics_platform.location
+  use_existing_resource_group          = true
+  resource_group_name                  = azurerm_resource_group.analytics_platform.name
   key_vault_private_endpoint_subnet_id = module.virutal_network.secrets_subnet.id
 
   #Temporarily commenting out to avoid name length issue.
@@ -75,8 +75,8 @@ module "datalake_managed_encryption_key" {
 module "audit_diagnostics_package" {
   source                                     = "git::https://github.com/Azure/terraform-azurerm-sec-audit-diagnostics-package"
   storage_account_private_endpoint_subnet_id = module.virutal_network.audit_subnet.id
-  use_existing_resource_group                = false
-  resource_group_location                    = azurerm_resource_group.analytics_platform.location
+  use_existing_resource_group                = true
+  resource_group_name                        = azurerm_resource_group.analytics_platform.name
   suffix                                     = local.suffix
   event_hub_namespace_sku                    = "Standard"
   event_hub_namespace_capacity               = "1"
