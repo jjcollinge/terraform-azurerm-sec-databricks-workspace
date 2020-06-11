@@ -117,8 +117,8 @@ module "databricks-workspace" {
   databricks_workspace_sku            = "premium"
   log_analytics_resource_group_name   = module.audit_diagnostics_package.resource_group.name
   log_analytics_name                  = module.audit_diagnostics_package.log_analytics_workspace.name
-  storage_account_resource_group_name = azurerm_resource_group.analytics_platform.name
-  storage_account_name                = module.datalake.storage_account.name
+  storage_account_resource_group_name = module.audit_diagnostics_package.resource_group.name
+  storage_account_name                = module.audit_diagnostics_package.storage_account.name
   module_depends_on                   = ["module.audit_diagnostics_package"]
 }
 
