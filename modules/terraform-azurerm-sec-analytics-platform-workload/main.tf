@@ -15,6 +15,10 @@ module "naming" {
 resource "azurerm_resource_group" "analytics_platform" {
   name     = module.naming.resource_group.name
   location = var.analytics_platform_resource_group_location
+
+  tags = {
+    "workload" = join("", local.suffix)
+  }
 }
 
 module "virutal_network" {
@@ -29,7 +33,7 @@ module "virutal_network" {
 module "datalake" {
   source                           = "git::https://github.com/Azure/terraform-azurerm-sec-storage-account"
   resource_group_name              = azurerm_resource_group.analytics_platform.name
-  storage_account_name             = module.naming.storage_account.name_unique
+  storage_account_name             = join("", ["datalake", module.naming.storage_account.name_unique])
   storage_account_tier             = "Standard"
   storage_account_replication_type = "LRS"
 
@@ -62,7 +66,7 @@ module "security_package" {
 #TODO: Check for key standard i.e key bit length and preferred crypto algorithm
 module "datalake_managed_encryption_key" {
   source              = "git::https://github.com/Azure/terraform-azurerm-sec-storage-managed-encryption-key"
-  resource_group_name = module.security_package.resource_group
+  resource_group_name = module.security_package.resource_group.name
   storage_account     = module.datalake.storage_account
   key_vault_name      = module.security_package.key_vault.name
   suffix              = local.suffix
@@ -111,20 +115,19 @@ module "databricks-workspace" {
   resource_group_name                 = azurerm_resource_group.analytics_platform.name
   suffix                              = local.suffix
   databricks_workspace_sku            = "premium"
-  log_analytics_resource_group_name   = module.audit_diagnostics_package.resource_group
+  log_analytics_resource_group_name   = module.audit_diagnostics_package.resource_group.name
   log_analytics_name                  = module.audit_diagnostics_package.log_analytics_workspace.name
   storage_account_resource_group_name = azurerm_resource_group.analytics_platform.name
   storage_account_name                = module.datalake.storage_account.name
   module_depends_on                   = ["module.audit_diagnostics_package"]
 }
 
-module "apim" {
+/* module "apim" {
   source              = "git::https://github.com/Azure/terraform-azurerm-sec-api-management"
   resource_group_name = azurerm_resource_group.analytics_platform.name
   suffix              = local.suffix
 
   #APIM CoreProperties
-
   #TODO: Add appropriate publisher details
   apim_publisher_name  = "Analytics Platform"
   apim_publisher_email = "Analytics@Platform.com"
@@ -143,7 +146,6 @@ module "apim" {
   certificates = []
 
   #APIM Authorisation
-
   #TODO: Establish and configure an authorisation server
   enable_authorization_server                     = false
   apim_authorization_server_name                  = ""
@@ -155,4 +157,4 @@ module "apim" {
   apim_authorization_server_grant_types           = []
   apim_bearer_token_sending_methods               = []
   apim_authorization_server_methods               = []
-}
+} */
