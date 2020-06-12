@@ -80,7 +80,8 @@ resource "time_sleep" "wait_240_seconds" {
     azurerm_subnet.apim_subnet,
     azurerm_subnet.secrets_subnet,
     azurerm_subnet.audit_subnet,
-    azurerm_subnet.data_lake_subnet
+    azurerm_subnet.data_lake_subnet,
+    azurerm_virtual_network_peering.ap_to_ss_peering
   ]
 
   create_duration = "240s"
