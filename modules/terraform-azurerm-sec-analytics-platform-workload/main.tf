@@ -50,9 +50,7 @@ module "security_package" {
   use_existing_resource_group          = true
   resource_group_name                  = azurerm_resource_group.analytics_platform.name
   key_vault_private_endpoint_subnet_id = module.virutal_network.secrets_subnet.id
-
-  #Temporarily commenting out to avoid name length issue.
-  #suffix                               = local.suffix
+  suffix                               = local.suffix
 
   #TODO: Work out what additional if any allowed ip ranges and permitted virtual network subnets there needs to be.
   allowed_ip_ranges                    = var.authorised_audit_client_ips
@@ -65,11 +63,12 @@ module "security_package" {
 
 #TODO: Check for key standard i.e key bit length and preferred crypto algorithm
 module "datalake_managed_encryption_key" {
-  source              = "git::https://github.com/Azure/terraform-azurerm-sec-storage-managed-encryption-key"
-  resource_group_name = module.security_package.resource_group.name
-  storage_account     = module.datalake.storage_account
-  key_vault_name      = module.security_package.key_vault.name
-  suffix              = local.suffix
+  source                 = "git::https://github.com/Azure/terraform-azurerm-sec-storage-managed-encryption-key"
+  resource_group_name    = module.security_package.resource_group.name
+  storage_account        = module.datalake.storage_account
+  key_vault_name         = module.security_package.key_vault.name
+  client_key_permissions = ["get", "delete", "create", "unwrapkey", "wrapkey"]
+  suffix                 = local.suffix
 }
 
 module "audit_diagnostics_package" {
@@ -104,11 +103,15 @@ module "audit_diagnostics_package" {
   storage_account_replication_type      = "LRS"
 
   #TODO: Work out what additional if any allowed ip ranges and permitted virtual network subnets there needs to be.
+  #TODO: Look at not using a user provided IP via var.authorised_audit_client_ips instead use another approach for like Network bypass.
 
-  allowed_ip_ranges                    = concat([], var.authorised_audit_client_ips)
+  allowed_ip_ranges                    = concat([], var.authorised_audit_client_ips) #NOTE: Use for development only
   permitted_virtual_network_subnet_ids = concat([], var.authorised_subnet_ids)
   bypass_internal_network_rules        = true
 }
+
+#TODO: Update storage account var name to reflect that they are for diagnostics 
+#TODO: Update module to include custom_parameters found here https://www.terraform.io/docs/providers/azurerm/r/databricks_workspace.html#no_public_ip
 
 module "databricks-workspace" {
   source                              = "git::https://github.com/Azure/terraform-azurerm-sec-databricks-workspace"
@@ -122,7 +125,7 @@ module "databricks-workspace" {
   module_depends_on                   = ["module.audit_diagnostics_package"]
 }
 
-/* module "apim" {
+module "apim" {
   source              = "git::https://github.com/Azure/terraform-azurerm-sec-api-management"
   resource_group_name = azurerm_resource_group.analytics_platform.name
   suffix              = local.suffix
@@ -157,4 +160,4 @@ module "databricks-workspace" {
   apim_authorization_server_grant_types           = []
   apim_bearer_token_sending_methods               = []
   apim_authorization_server_methods               = []
-} */
+}

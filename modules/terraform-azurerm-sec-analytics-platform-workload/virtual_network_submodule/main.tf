@@ -75,7 +75,7 @@ resource "azurerm_virtual_network_peering" "ap_to_ss_peering" {
 
 # TODO: Remove this using a script to wait
 # for the private endpoint status to be Ready.
-resource "time_sleep" "wait_120_seconds" {
+resource "time_sleep" "wait_240_seconds" {
   depends_on = [
     azurerm_subnet.apim_subnet,
     azurerm_subnet.secrets_subnet,
@@ -83,11 +83,11 @@ resource "time_sleep" "wait_120_seconds" {
     azurerm_subnet.data_lake_subnet
   ]
 
-  create_duration = "120s"
+  create_duration = "240s"
 }
 
 resource "null_resource" "network_ready" {
-  depends_on = [time_sleep.wait_120_seconds]
+  depends_on = [time_sleep.wait_240_seconds]
 }
 
 # subnet for: datalake, databricks
