@@ -41,7 +41,7 @@ module "datalake" {
   allowed_ip_ranges                    = var.authorised_audit_client_ips
   permitted_virtual_network_subnet_ids = [module.virutal_network.data_lake_subnet.id, module.virutal_network.apim_subnet.id, module.virutal_network.databricks_private_subnet.id]
   enable_data_lake_filesystem          = true
-  data_lake_filesystem_name            = module.naming.data_lake_file_system.name_unique
+  data_lake_filesystem_name            = module.naming.storage_data_lake_gen2_filesystem.name_unique
   bypass_internal_network_rules        = true
 }
 
@@ -67,7 +67,7 @@ module "datalake_managed_encryption_key" {
   resource_group_name    = module.security_package.resource_group.name
   storage_account        = module.datalake.storage_account
   key_vault_name         = module.security_package.key_vault.name
-  client_key_permissions = ["get", "delete", "create", "unwrapkey", "wrapkey"]
+  client_key_permissions = ["get", "delete", "create", "unwrapkey", "wrapkey", "update"]
   suffix                 = local.suffix
 }
 
@@ -81,12 +81,12 @@ module "audit_diagnostics_package" {
   event_hub_namespace_capacity               = "1"
   event_hubs = {
     "eh-ap" = {
-      name              = module.naming.event_hub.name
+      name              = module.naming.eventhub.name
       partition_count   = 1
       message_retention = 1
       authorisation_rules = {
         "ehra-ap" = {
-          name   = module.naming.event_hub_authorization_rule.name
+          name   = module.naming.eventhub_namespace_authorization_rule.name
           listen = true
           send   = true
           manage = true
